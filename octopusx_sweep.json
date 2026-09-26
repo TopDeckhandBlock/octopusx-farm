@@ -1,0 +1,672 @@
+[
+  {
+    "model": "\"MiniMax-H3-2K",
+    "status": "HTTP 403",
+    "error": "Invalid provider configuration for this token (request id: d08cc394-b9fc-11f1-afe9-0afc3380a2e6)"
+  },
+  {
+    "model": "MiniMax-H3-768P",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model MiniMax-H3-768P under provider MiniMax (distributor): channel not fo"
+  },
+  {
+    "model": "MiniMax-H3-Context",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model MiniMax-H3-Context under provider MiniMax (distributor): channel not"
+  },
+  {
+    "model": "MiniMax-H3-Context-Ir",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model MiniMax-H3-Context-Ir under provider MiniMax (distributor): channel "
+  },
+  {
+    "model": "MiniMax-H3-Regeneration-2K",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model MiniMax-H3-Regeneration-2K under provider MiniMax (distributor): cha"
+  },
+  {
+    "model": "MiniMax-M2.7",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model MiniMax-M2.7 under provider MiniMax (distributor): channel not found"
+  },
+  {
+    "model": "MiniMax-M2.7-highspeed",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model MiniMax-M2.7-highspeed under provider MiniMax (distributor): channel"
+  },
+  {
+    "model": "MiniMax-M3",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model MiniMax-M3 under provider MiniMax (distributor): channel not found ("
+  },
+  {
+    "model": "claude-fable-5",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "claude-fable-5-1",
+    "status": "HTTP 404",
+    "error": "Model 'claude-fable-5-1' is not available for the configured Cursor credential pool"
+  },
+  {
+    "model": "claude-haiku-4-5",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "claude-haiku-4-5-20251001",
+    "status": "HTTP 400",
+    "error": "Model claude-haiku-4-5-20251001 has not been priced by the administrator yet. Please contact the site administ"
+  },
+  {
+    "model": "claude-opus-4-5",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "claude-opus-4-5-20251101",
+    "status": "HTTP 400",
+    "error": "Model claude-opus-4-5-20251101 has not been priced by the administrator yet. Please contact the site administr"
+  },
+  {
+    "model": "claude-opus-4-6",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "claude-opus-4-6-thinking",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model claude-opus-4-6-thinking under provider  (distributor): This model i"
+  },
+  {
+    "model": "claude-opus-4-7",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "claude-opus-4-8",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "claude-opus-5",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "claude-sonnet-4",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model claude-sonnet-4 under provider  (distributor): This model is not ena"
+  },
+  {
+    "model": "claude-sonnet-4-20250514",
+    "status": "HTTP 400",
+    "error": "Model claude-sonnet-4-20250514 has not been priced by the administrator yet. Please contact the site administr"
+  },
+  {
+    "model": "claude-sonnet-4-5",
+    "status": "HTTP 400",
+    "error": "Model claude-sonnet-4-5 has not been priced by the administrator yet. Please contact the site administrator to"
+  },
+  {
+    "model": "claude-sonnet-4-5-20250929",
+    "status": "HTTP 400",
+    "error": "Model claude-sonnet-4-5-20250929 has not been priced by the administrator yet. Please contact the site adminis"
+  },
+  {
+    "model": "claude-sonnet-4-6",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "claude-sonnet-5",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "deepseek-v4-flash",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "deepseek-v4-pro",
+    "status": "HTTP 403",
+    "error": "\u65e0\u6743\u8bbf\u95ee Deepseek-v4-pro \u5206\u7ec4 (request id: 202609262251342608935939ea688d9In5m0IwL)"
+  },
+  {
+    "model": "deepseek-v4.1-flash",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-2.5-flash",
+    "status": "OK",
+    "content": ""
+  },
+  {
+    "model": "gemini-2.5-flash-image",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-2.5-flash-image-preview",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-2.5-flash-image-preview under provider Gemini (distributor): "
+  },
+  {
+    "model": "gemini-2.5-flash-lite",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-2.5-pro",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-3-flash",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3-flash under provider Gemini (distributor): channel not foun"
+  },
+  {
+    "model": "gemini-3-flash-preview",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-3-pro-image",
+    "status": "OK",
+    "content": ""
+  },
+  {
+    "model": "gemini-3-pro-image-preview",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3-pro-image-preview under provider Gemini (distributor): chan"
+  },
+  {
+    "model": "gemini-3-pro-image-preview-1K",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3-pro-image-preview-1K under provider Gemini (distributor): c"
+  },
+  {
+    "model": "gemini-3-pro-image-preview-2K",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3-pro-image-preview-2K under provider Gemini (distributor): c"
+  },
+  {
+    "model": "gemini-3-pro-image-preview-4K",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3-pro-image-preview-4K under provider Gemini (distributor): c"
+  },
+  {
+    "model": "gemini-3-pro-image-preview-c",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3-pro-image-preview-c under provider Gemini (distributor): ch"
+  },
+  {
+    "model": "gemini-3-pro-preview",
+    "status": "HTTP 400",
+    "error": "\u6a21\u578b gemini-3-pro-preview \u7684\u4ef7\u683c\u5c1a\u672a\u7531\u7ba1\u7406\u5458\u914d\u7f6e\uff0c\u6682\u65f6\u65e0\u6cd5\u4f7f\u7528\uff0c\u8bf7\u8054\u7cfb\u7ad9\u70b9\u7ba1\u7406\u5458\u5f00\u542f\u8be5\u6a21\u578b\uff1bModel gemini-3-pro-preview has not been priced by the"
+  },
+  {
+    "model": "gemini-3.1-flash-image",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-3.1-flash-image-preview",
+    "status": "HTTP 429",
+    "error": "upstream overloaded, please retry"
+  },
+  {
+    "model": "gemini-3.1-flash-image-preview-4k",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3.1-flash-image-preview-4k under provider Gemini (distributor"
+  },
+  {
+    "model": "gemini-3.1-flash-image-preview-c",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3.1-flash-image-preview-c under provider Gemini (distributor)"
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-3.1-flash-lite-image",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-3.1-flash-lite-preview",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-3.1-flash-live-preview",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3.1-flash-live-preview under provider Gemini (distributor): c"
+  },
+  {
+    "model": "gemini-3.1-pro",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gemini-3.1-pro under provider Gemini (distributor): channel not foun"
+  },
+  {
+    "model": "gemini-3.1-pro-preview",
+    "status": "HTTP 429",
+    "error": "Resource exhausted. Please try again later. Please refer to https://***.com/***/***/***/*** for more details. "
+  },
+  {
+    "model": "gemini-3.5-flash",
+    "status": "OK",
+    "content": ""
+  },
+  {
+    "model": "gemini-3.5-flash-lite",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-3.6-flash",
+    "status": "OK",
+    "content": ""
+  },
+  {
+    "model": "gemini-3.7-flash",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gemini-3.8-flash",
+    "status": "OK",
+    "content": ""
+  },
+  {
+    "model": "glm-5.2",
+    "status": "HTTP 403",
+    "error": "Invalid provider configuration for this token (request id: d5508490-b9fc-11f1-a2c6-4ea00946466b)"
+  },
+  {
+    "model": "glm-5.3",
+    "status": "HTTP 403",
+    "error": "Invalid provider configuration for this token (request id: d5556321-b9fc-11f1-afe9-0afc3380a2e6)"
+  },
+  {
+    "model": "glm-5.3-flash",
+    "status": "HTTP 403",
+    "error": "Invalid provider configuration for this token (request id: d56e7d40-b9fc-11f1-a2c6-4ea00946466b)"
+  },
+  {
+    "model": "gpt-3.5-turbo",
+    "status": "HTTP 503",
+    "error": "No available channel for model gpt-3.5-turbo under group az gpt (distributor) (request id: 2026092622513999170"
+  },
+  {
+    "model": "gpt-4o",
+    "status": "HTTP 503",
+    "error": "No available channel for model gpt-4o under group openai\u5b98\u8f6c (distributor) (request id: 202609262251405099668438"
+  },
+  {
+    "model": "gpt-4o-mini",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gpt-5.2",
+    "status": "HTTP 503",
+    "error": "No available channel for model gpt-5.2 under group openai\u5b98\u8f6c (distributor) (request id: 20260926225140394698614"
+  },
+  {
+    "model": "gpt-5.2-pro",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gpt-5.2-pro under provider  (distributor): This model is not enabled"
+  },
+  {
+    "model": "gpt-5.3-codex",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gpt-5.3-codex under provider  (distributor): This model is not enabl"
+  },
+  {
+    "model": "gpt-5.4",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gpt-5.4-mini",
+    "status": "HTTP 503",
+    "error": "No available channel for model gpt-5.4-mini under group Azure\u9ad8\u7ea7T6 (distributor) (request id: 20260926225142198"
+  },
+  {
+    "model": "gpt-5.4-nano",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gpt-5.4-nano under provider  (distributor): This model is not enable"
+  },
+  {
+    "model": "gpt-5.4-pro",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gpt-5.4-pro under provider  (distributor): This model is not enabled"
+  },
+  {
+    "model": "gpt-5.5",
+    "status": "OK",
+    "content": ""
+  },
+  {
+    "model": "gpt-5.5-pro",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gpt-5.5-pro under provider  (distributor): This model is not enabled"
+  },
+  {
+    "model": "gpt-5.6-luna",
+    "status": "HTTP 503",
+    "error": "No available channel for model gpt-5.6-luna under group openai\u5b98\u8f6c (distributor) (request id: 202609262251440758"
+  },
+  {
+    "model": "gpt-5.6-sol",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gpt-5.6-terra",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gpt-6-astra",
+    "status": "OK",
+    "content": "OK"
+  },
+  {
+    "model": "gpt-image-2",
+    "status": "HTTP 400",
+    "error": "This model is not supported on the Chat Completions endpoint"
+  },
+  {
+    "model": "gpt-image-2-c",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model gpt-image-2-c under provider  (distributor): This model is not enabl"
+  },
+  {
+    "model": "gpt-image-2.5-flare",
+    "status": "HTTP 400",
+    "error": "This model is not supported on the Chat Completions endpoint"
+  },
+  {
+    "model": "gpt-image-2.5-sunburst",
+    "status": "HTTP 400",
+    "error": "This model is not supported on the Chat Completions endpoint"
+  },
+  {
+    "model": "grok-4",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model grok-4 under provider Grok (distributor): channel not found (request"
+  },
+  {
+    "model": "grok-4-1-auto",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model grok-4-1-auto under provider Grok (distributor): channel not found ("
+  },
+  {
+    "model": "grok-4-1-image",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model grok-4-1-image under provider Grok (distributor): channel not found "
+  },
+  {
+    "model": "grok-4-2",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model grok-4-2 under provider Grok (distributor): channel not found (reque"
+  },
+  {
+    "model": "grok-4-2-image",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model grok-4-2-image under provider Grok (distributor): channel not found "
+  },
+  {
+    "model": "grok-4.5",
+    "status": "HTTP 429",
+    "error": "\u4e0a\u6e38\u8d26\u53f7\u989d\u5ea6\u7b49\u5f85\u6062\u590d"
+  },
+  {
+    "model": "grok-4.6",
+    "status": "HTTP 429",
+    "error": "\u4e0a\u6e38\u8d26\u53f7\u989d\u5ea6\u7b49\u5f85\u6062\u590d"
+  },
+  {
+    "model": "grok-imagine-image",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model grok-imagine-image under provider Grok (distributor): channel not fo"
+  },
+  {
+    "model": "grok-imagine-image-2.0",
+    "status": "HTTP 503",
+    "error": "\u5206\u7ec4 \u6d4b\u8bd5\u5206\u7ec4 \u4e0b\u6a21\u578b grok-imagine-image-2.0 \u65e0\u53ef\u7528\u6e20\u9053\uff08distributor\uff09 (request id: 202609262251454465652248268d9d6fYKQl7jk)"
+  },
+  {
+    "model": "grok-imagine-image-quality",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model grok-imagine-image-quality under provider Grok (distributor): channe"
+  },
+  {
+    "model": "grok-imagine-video",
+    "status": "HTTP 503",
+    "error": "\u5206\u7ec4 \u6d4b\u8bd5\u5206\u7ec4 \u4e0b\u6a21\u578b grok-imagine-video \u65e0\u53ef\u7528\u6e20\u9053\uff08distributor\uff09 (request id: 202609262251456567676048268d9d6w184ihTC)"
+  },
+  {
+    "model": "grok-imagine-video-1.5",
+    "status": "HTTP 503",
+    "error": "\u5206\u7ec4 \u6d4b\u8bd5\u5206\u7ec4 \u4e0b\u6a21\u578b grok-imagine-video-1.5 \u65e0\u53ef\u7528\u6e20\u9053\uff08distributor\uff09 (request id: 202609262251456904812248268d9d6srqHnDRo)"
+  },
+  {
+    "model": "kimi-k2.6",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model kimi-k2.6 under provider Moonshot (distributor): channel not found ("
+  },
+  {
+    "model": "kimi-k3",
+    "status": "HTTP 503",
+    "error": "\u5206\u7ec4 Kimi_Vip \u4e0b\u6a21\u578b moonshotai/Kimi-K3 \u65e0\u53ef\u7528\u6e20\u9053\uff08distributor\uff09 (request id: 202609262251465897891738268d9d6LAKt9DJU)"
+  },
+  {
+    "model": "kling-2.5",
+    "status": "HTTP 503",
+    "error": "\u5206\u7ec4 default \u4e0b\u6a21\u578b kling-2.5 \u65e0\u53ef\u7528\u6e20\u9053\uff08distributor\uff09 (request id: 202609262251487392590998268d9d6erBtM9Lq)"
+  },
+  {
+    "model": "kling-2.5-1080p",
+    "status": "HTTP 503",
+    "error": "\u83b7\u53d6\u5206\u7ec4 default \u4e0b\u6a21\u578b kling-2.5-1080p \u7684\u53ef\u7528\u6e20\u9053\u5931\u8d25\uff08distributor\uff09\uff1aall 1 channels for model kling-2.5-1080p in group defaul"
+  },
+  {
+    "model": "kling-2.5-720p",
+    "status": "HTTP 503",
+    "error": "\u83b7\u53d6\u5206\u7ec4 default \u4e0b\u6a21\u578b kling-2.5-720p \u7684\u53ef\u7528\u6e20\u9053\u5931\u8d25\uff08distributor\uff09\uff1aall 1 channels for model kling-2.5-720p in group default "
+  },
+  {
+    "model": "kling-3.0-omni",
+    "status": "HTTP 503",
+    "error": "\u5206\u7ec4 default \u4e0b\u6a21\u578b kling-3.0-omni \u65e0\u53ef\u7528\u6e20\u9053\uff08distributor\uff09 (request id: 202609262251491873090958268d9d6oU6XFcIx)"
+  },
+  {
+    "model": "kling-3.0-omni-4k-ref-audio",
+    "status": "HTTP 400",
+    "error": "\u6a21\u578b kling-3.0-omni-4k-ref-audio \u7684\u4ef7\u683c\u5c1a\u672a\u7531\u7ba1\u7406\u5458\u914d\u7f6e\uff0c\u6682\u65f6\u65e0\u6cd5\u4f7f\u7528\uff0c\u8bf7\u8054\u7cfb\u7ad9\u70b9\u7ba1\u7406\u5458\u5f00\u542f\u8be5\u6a21\u578b\uff1bModel kling-3.0-omni-4k-ref-audio has not been"
+  },
+  {
+    "model": "kling-3.0-omni-4k-ref-mute",
+    "status": "HTTP 400",
+    "error": "\u6a21\u578b kling-3.0-omni-4k-ref-mute \u7684\u4ef7\u683c\u5c1a\u672a\u7531\u7ba1\u7406\u5458\u914d\u7f6e\uff0c\u6682\u65f6\u65e0\u6cd5\u4f7f\u7528\uff0c\u8bf7\u8054\u7cfb\u7ad9\u70b9\u7ba1\u7406\u5458\u5f00\u542f\u8be5\u6a21\u578b\uff1bModel kling-3.0-omni-4k-ref-mute has not been p"
+  },
+  {
+    "model": "kling-3.0-omni-720p-noref-audio",
+    "status": "HTTP 503",
+    "error": "\u83b7\u53d6\u5206\u7ec4 default \u4e0b\u6a21\u578b kling-3.0-omni-720p-noref-audio \u7684\u53ef\u7528\u6e20\u9053\u5931\u8d25\uff08distributor\uff09\uff1aall 1 channels for model kling-3.0-omni-"
+  },
+  {
+    "model": "kling-3.0-omni-720p-noref-mute",
+    "status": "HTTP 503",
+    "error": "\u83b7\u53d6\u5206\u7ec4 default \u4e0b\u6a21\u578b kling-3.0-omni-720p-noref-mute \u7684\u53ef\u7528\u6e20\u9053\u5931\u8d25\uff08distributor\uff09\uff1aall 1 channels for model kling-3.0-omni-7"
+  },
+  {
+    "model": "kling-3.0-omni-720p-ref-audio",
+    "status": "HTTP 503",
+    "error": "\u83b7\u53d6\u5206\u7ec4 default \u4e0b\u6a21\u578b kling-3.0-omni-720p-ref-audio \u7684\u53ef\u7528\u6e20\u9053\u5931\u8d25\uff08distributor\uff09\uff1aall 1 channels for model kling-3.0-omni-72"
+  },
+  {
+    "model": "kling-3.0-omni-720p-ref-mute",
+    "status": "HTTP 503",
+    "error": "\u83b7\u53d6\u5206\u7ec4 default \u4e0b\u6a21\u578b kling-3.0-omni-720p-ref-mute \u7684\u53ef\u7528\u6e20\u9053\u5931\u8d25\uff08distributor\uff09\uff1aall 1 channels for model kling-3.0-omni-720"
+  },
+  {
+    "model": "omni-1.1-flash",
+    "status": "OK",
+    "content": "[download video](https://flow-content.google/video/80ea4f0e-"
+  },
+  {
+    "model": "omni-1.1-flash-4K",
+    "status": "ERR",
+    "error": "timed out"
+  },
+  {
+    "model": "omni-1.1-flash-hd",
+    "status": "ERR",
+    "error": "timed out"
+  },
+  {
+    "model": "omni-1.1-flash-v2v",
+    "status": "OK",
+    "content": "[download video](https://flow-content.google/video/d5ebe786-"
+  },
+  {
+    "model": "omni_1_1_flash",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model omni_1_1_flash under provider Kling (distributor): channel not found"
+  },
+  {
+    "model": "omni_1_1_flash-4K",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model omni_1_1_flash-4K under provider Kling (distributor): channel not fo"
+  },
+  {
+    "model": "omni_1_1_flash-hd",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model omni_1_1_flash-hd under provider Kling (distributor): channel not fo"
+  },
+  {
+    "model": "omni_1_1_flash-v2v",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model omni_1_1_flash-v2v under provider Kling (distributor): channel not f"
+  },
+  {
+    "model": "qwen-image-3.0",
+    "status": "HTTP 401",
+    "error": "API-key is blocked."
+  },
+  {
+    "model": "qwen-image-3.0-pro",
+    "status": "HTTP 401",
+    "error": "API-key is blocked."
+  },
+  {
+    "model": "seedance-2.0",
+    "status": "HTTP 404",
+    "error": "'dreamina-seedance-2-0-260128-max' is not available on this API key's plan. Call GET /v1/models to see which m"
+  },
+  {
+    "model": "seedance-2.0-fast",
+    "status": "HTTP 404",
+    "error": "'dreamina-seedance-2-0-fast-260128-max' is not available on this API key's plan. Call GET /v1/models to see wh"
+  },
+  {
+    "model": "seedance-2.0-mini",
+    "status": "HTTP 404",
+    "error": "'dreamina-seedance-2-0-mini-260615-max' is not available on this API key's plan. Call GET /v1/models to see wh"
+  },
+  {
+    "model": "seedance-2.5",
+    "status": "HTTP 404",
+    "error": "'doubao-seedance-2-5-260628-max' is not available on this API key's plan. Call GET /v1/models to see which mod"
+  },
+  {
+    "model": "seedance-asset",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model seedance-asset under provider Doubao (distributor): channel not foun"
+  },
+  {
+    "model": "seedream-4-0",
+    "status": "HTTP 429",
+    "error": "RPM (Requests Per Minute) limit of the model doubao-seedream-5-0-pro is exceeded. Please try again later Reque"
+  },
+  {
+    "model": "seedream-4-5",
+    "status": "HTTP 429",
+    "error": "RPM (Requests Per Minute) limit of the model doubao-seedream-5-0-pro is exceeded. Please try again later Reque"
+  },
+  {
+    "model": "seedream-5-0",
+    "status": "HTTP 429",
+    "error": "RPM (Requests Per Minute) limit of the model doubao-seedream-5-0-pro is exceeded. Please try again later Reque"
+  },
+  {
+    "model": "seedream-5-0-lite",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model seedream-5-0-lite under provider Doubao (distributor): channel not f"
+  },
+  {
+    "model": "seedream-5-0-pro",
+    "status": "HTTP 503",
+    "error": "Failed to get available channel for model seedream-5-0-pro under provider Doubao (distributor): channel not fo"
+  },
+  {
+    "model": "veo-3-1",
+    "status": "ERR",
+    "error": "timed out"
+  },
+  {
+    "model": "veo-3-1-fast",
+    "status": "ERR",
+    "error": "timed out"
+  },
+  {
+    "model": "veo-3.1-4K",
+    "status": "ERR",
+    "error": "timed out"
+  },
+  {
+    "model": "veo-3.1-hd",
+    "status": "ERR",
+    "error": "timed out"
+  },
+  {
+    "model": "veo_3_1",
+    "status": "HTTP 400",
+    "error": "Model veo_3_1 has not been priced by the administrator yet. Please contact the site administrator to enable th"
+  },
+  {
+    "model": "veo_3_1-4K",
+    "status": "HTTP 400",
+    "error": "Model veo_3_1-4K has not been priced by the administrator yet. Please contact the site administrator to enable"
+  },
+  {
+    "model": "veo_3_1-fast",
+    "status": "HTTP 400",
+    "error": "Model veo_3_1-fast has not been priced by the administrator yet. Please contact the site administrator to enab"
+  },
+  {
+    "model": "veo_3_1-hd",
+    "status": "HTTP 400",
+    "error": "Model veo_3_1-hd has not been priced by the administrator yet. Please contact the site administrator to enable"
+  },
+  {
+    "model": "wan3.0-video",
+    "status": "HTTP 400",
+    "error": "No static resource v1/chat/completions."
+  },
+  {
+    "model": "wan3.0-video-prime",
+    "status": "HTTP 400",
+    "error": "No static resource v1/chat/completions."
+  }
+]
