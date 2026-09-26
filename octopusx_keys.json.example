@@ -1,0 +1,9 @@
+{
+  "keys": ["sk-oct-xxxxxxxxxxxxxxxx"],
+  "base_url": "https://octopusx.ai/v1",
+  "upstream_headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "Origin": "https://octopusx.ai",
+    "Referer": "https://octopusx.ai/"
+  }
+}
