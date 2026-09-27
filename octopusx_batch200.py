@@ -10,6 +10,7 @@ import string
 import sys
 import time
 import urllib.error
+import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
@@ -25,12 +26,13 @@ N_ACCOUNTS = int(sys.argv[1]) if len(sys.argv) > 1 else 200
 WORKERS = int(sys.argv[2]) if len(sys.argv) > 2 else 5
 
 
-def http(url, data=None, headers=None, method=None, timeout=45, retries=3):
+def http(url, data=None, headers=None, method=None, timeout=15, retries=3):
     for attempt in range(retries):
         try:
             h = {"User-Agent": UA, "Accept": "application/json, text/plain, */*",
                  "Accept-Language": "en-US",
-                 "Origin": BASE if "octopusx" in url else "https://api.mail.tm"}
+                 "Origin": BASE if "octopusx" in url else
+                           "https://" + urllib.parse.urlparse(url).netloc}
             if "octopusx" in url:
                 h["Referer"] = BASE + "/console/"
             if data is not None:
@@ -49,12 +51,14 @@ def http(url, data=None, headers=None, method=None, timeout=45, retries=3):
                         return json.loads(r.read())
                 except Exception:
                     if attempt < retries - 1:
-                        _tls.proxy = _pick_proxy()  # dead proxy -> rotate to another
+                        _rotate_dead(proxy)  # dead proxy -> mark dead + rotate to another
                         continue
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
             if e.code in (429, 502, 503) and attempt < retries - 1:
+                if proxy:  # IP burned for this host -> rotate (keep in pool)
+                    _tls.proxy = _pick_proxy()
                 time.sleep(3 * (attempt + 1))
                 continue
             raise
@@ -70,26 +74,46 @@ def rnd(n):
 
 
 class MailTm:
+    """Temp inbox on mail.tm OR its mirror mail.gw (same API, split rate limits).
+    Sticky failover: keep the provider that worked last, switch on failure."""
+    PROVIDERS = ["https://api.mail.tm", "https://api.mail.gw"]
+    _sticky = None  # class-level: last api that answered /domains
+
+    def _pick_api(self):
+        order = [p for p in self.PROVIDERS if p != self._sticky]
+        if self._sticky:
+            order.insert(0, self._sticky)
+        else:
+            random.shuffle(order)
+        for api in order:
+            try:
+                dom = http(f"{api}/domains")["hydra:member"][0]["domain"]
+                MailTm._sticky = api
+                return api, dom
+            except Exception:
+                continue
+        raise RuntimeError("no mail provider answered /domains")
+
     def __init__(self):
-        dom = http("https://api.mail.tm/domains")["hydra:member"][0]["domain"]
+        self.api, dom = self._pick_api()
         self.address = "ox" + rnd(8) + "@" + dom
         self.password = rnd(14)
-        http("https://api.mail.tm/accounts", {"address": self.address, "password": self.password}, method="POST")
-        self.token = http("https://api.mail.tm/token",
+        http(f"{self.api}/accounts", {"address": self.address, "password": self.password}, method="POST")
+        self.token = http(f"{self.api}/token",
                           {"address": self.address, "password": self.password}, method="POST")["token"]
         self.headers = {"Authorization": f"Bearer {self.token}"}
 
     def wait_code(self, sender="octopusx", timeout=120):
         deadline = time.time() + timeout
         while time.time() < deadline:
-            time.sleep(3)
+            time.sleep(4)
             try:
-                msgs = http("https://api.mail.tm/messages", headers=self.headers)["hydra:member"]
+                msgs = http(f"{self.api}/messages", headers=self.headers)["hydra:member"]
             except Exception:
                 continue
             for m in msgs:
                 if sender in (m.get("from", {}).get("address") or ""):
-                    body = http(f"https://api.mail.tm/messages/{m['id']}",
+                    body = http(f"{self.api}/messages/{m['id']}",
                                 headers=self.headers).get("text", "")
                     found = re.findall(r"\b(\d{6})\b", body)
                     if found:
@@ -163,6 +187,16 @@ def _pick_proxy():
         return octopusx_proxies.pick()
     except Exception:
         return None
+
+
+def _rotate_dead(p):
+    """Mark proxy dead in the shared pool memory, then pick the next one."""
+    try:
+        import octopusx_proxies
+        octopusx_proxies.mark_dead(p)
+    except Exception:
+        pass
+    _tls.proxy = _pick_proxy()
 
 
 def register_with_retry(i, attempts=5):
