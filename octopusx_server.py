@@ -47,6 +47,7 @@ UPSTREAM_TIMEOUT = 180
 PROBE_TIMEOUT = 90
 REQLOG_SIZE = 300
 FARM_LOOP = os.environ.get("OCTOPUSX_FARM_LOOP") == "1"
+FARM_TARGET = int(os.environ.get("OCTOPUSX_FARM_TARGET", "0") or 0)
 
 lock = threading.RLock()
 state: dict = {
@@ -329,8 +330,12 @@ def _autoreg_watch() -> None:
         pass
     if FARM_LOOP and not autoreg.get("loop_stop"):
         try:
+            n_acc = accounts_info().get("n", 0)
+            if FARM_TARGET and n_acc >= FARM_TARGET:
+                print(f"[farm-loop] target {FARM_TARGET} reached ({n_acc}), stopping", flush=True)
+                return
             autoreg_start(autoreg["n"] or 10, autoreg["workers"] or 5)
-            print(f"[farm-loop] next batch n={autoreg['n']}", flush=True)
+            print(f"[farm-loop] next batch n={autoreg['n']} (accounts {n_acc}/{FARM_TARGET or '∞'})", flush=True)
         except Exception as e:
             print(f"[farm-loop] chain failed: {e}", flush=True)
 
