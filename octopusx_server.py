@@ -52,7 +52,7 @@ FARM_TARGET = int(os.environ.get("OCTOPUSX_FARM_TARGET", "0") or 0)
 lock = threading.RLock()
 state: dict = {
     "keys": [], "base": "", "upstream_headers": {},
-    "cooldowns": {}, "idx": 0, "ok": 0, "fail": 0,
+    "cooldowns": {}, "idx": 0, "ok": 0, "fail": 0, "dead_models": {},
     "last_error": None, "started": time.time(), "config_mtime": 0.0,
     "model_stats": {},          # model -> {ok, fail, last, ts, ms}
     "reqlog": collections.deque(maxlen=REQLOG_SIZE),
@@ -177,6 +177,18 @@ def mark_cooldown(key: str, code: int, body: bytes | None) -> None:
     with lock:
         state["cooldowns"][key] = time.time() + dur
 
+def mark_dead(model: str, dur: int = 180) -> None:
+    """Cache a model as dead to stop burning keys on every request."""
+    if not model:
+        return
+    with lock:
+        state["dead_models"][model] = time.time() + dur
+
+
+def clear_dead(model: str) -> None:
+    with lock:
+        state["dead_models"].pop(model, None)
+
 
 def is_retryable(code: int, body: bytes | None) -> bool:
     if code in (408, 429, 500, 502, 503, 504):
@@ -232,6 +244,9 @@ def probe_model(model: str) -> dict:
     body = json.dumps({"model": model, "messages": [{"role": "user", "content": "Say OK"}],
                        "max_tokens": 8}).encode()
     tried: set = set()
+    with lock:
+        if state["dead_models"].get(model, 0) > time.time():
+            return {"model": model, "status": "DEAD", "error": "known dead (cached)", "ms": 0}
     total = len(state["keys"])
     t0 = time.time()
     for _ in range(min(max(total, 1), 4)):
@@ -249,6 +264,7 @@ def probe_model(model: str) -> dict:
                     pass
                 ms = int((time.time() - t0) * 1000)
                 record(model, True, "OK", ms, key)
+                clear_dead(model)
                 return {"model": model, "status": "OK", "content": content[:120], "ms": ms}
         except urllib.error.HTTPError as e:
             eb = e.read()
@@ -380,7 +396,10 @@ def autoreg_status() -> dict:
         lines: list[str] = []
     try:
         with open(LOG_PATH, "rb") as f:
-            lines = f.read().decode("utf-8", "ignore").splitlines()[-12:]
+            f.seek(0, 2)
+            size = f.tell()
+            f.seek(max(0, size - 8192))
+            lines = [l for l in f.read().decode("utf-8", "ignore").splitlines() if l.strip()][-12:]
     except OSError:
         pass
     acc = accounts_info()
@@ -426,7 +445,7 @@ def api_models() -> list:
         sw = sweep.get(n, {})
         out.append({
             "name": n,
-            "sweep": sw.get("status") or ("unknown" if not sw else sw.get("status")),
+            "sweep": sw.get("status") or "unknown",
             "live_ok": s.get("ok", 0), "live_fail": s.get("fail", 0),
             "last": s.get("last", ""), "ms": s.get("ms", 0), "ts": s.get("ts", 0),
         })
@@ -548,6 +567,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 except Exception:
                     pass
 
+        if model:
+            with lock:
+                dead_until = state["dead_models"].get(model, 0)
+            if dead_until > time.time():
+                self._json({"error": {"message": f"model '{model}' is marked dead, retry later",
+                                      "type": "dead_model", "code": 503}}, 503)
+                return
+
         t0 = time.time()
         tried: set = set()
         attempts = 0
@@ -563,9 +590,16 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 eb = e.read()
                 if is_retryable(e.code, eb):
                     mark_cooldown(key, e.code, eb)
+                    if model and e.code in (500, 502, 503, 504):
+                        mark_dead(model, 180)   # no channel for model: short dead cache
                     if attempts < max(total, 1):
                         continue
                 record(model or path, False, f"HTTP {e.code}", int((time.time() - t0) * 1000), key)
+                if model:
+                    if e.code in (400, 404):
+                        mark_dead(model, 600)   # model not available upstream
+                    elif e.code in (500, 502, 503, 504):
+                        mark_dead(model, 180)   # no channel: likely transient, short cache
                 self._json({"error": {"message": _err_text(eb) or f"HTTP {e.code}",
                                       "type": "upstream_error", "code": e.code}}, e.code)
                 return
@@ -608,7 +642,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
                             w(chunk)
                 except (ConnectionResetError, ConnectionAbortedError, BrokenPipeError):
                     pass
-                self.wfile.write(b"0\r\n\r\n")
+                try:
+                    self.wfile.write(b"0\r\n\r\n")
+                except (ConnectionResetError, ConnectionAbortedError, BrokenPipeError):
+                    pass
                 record(model or path, True, "OK", int((time.time() - t0) * 1000), key)
             finally:
                 try:
