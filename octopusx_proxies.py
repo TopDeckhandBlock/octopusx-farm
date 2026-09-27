@@ -12,18 +12,26 @@ from concurrent.futures import ThreadPoolExecutor
 
 SOURCES = [
     "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=5000&country=all&ssl=all&anonymity=all",
+    "https://api.proxyscrape.com/v3/default-free-proxy-list?request=displayproxies&protocol=http&timeout=5000&country=all&ssl=all&anonymity=all",
     "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
     "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt",
     "https://raw.githubusercontent.com/mmpx12/proxy-list/master/http.txt",
     "https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/all/data.txt",
     "https://api.openproxylist.xyz/http.txt",
+    "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt",
+    "https://raw.githubusercontent.com/sunny9577/proxy-scraper/master/generated/http_proxies.txt",
+    "https://raw.githubusercontent.com/ShiftyRob/Proxy-List/master/http.txt",
+    "https://raw.githubusercontent.com/zevtyardt/proxy-list/main/all.txt",
+    "https://raw.githubusercontent.com/yemixzy/proxy-list/master/proxies/http.txt",
+    "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTP_RAW.txt",
+    "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=http",
 ]
 OUT_PATH = "octopusx_proxies.json"
 TEST_URL = "https://api.ipify.org/?format=json"
 TIMEOUT = 8
-THREADS = 60
-MAX_PROXIES = 400
+THREADS = 120
+MAX_PROXIES = 2000
 
 _dead = set()  # in-flight failures; process-local memory of dead proxies
 
@@ -60,7 +68,8 @@ def test_proxy(pp):
 def refresh():
     """Fetch + validate; returns list of http://ip:port strings (may be empty)."""
     raw = fetch_lists()
-    print(f"[proxies] fetched {len(raw)} candidates from {len(SOURCES)} lists")
+    raw = list(set(raw) | {p.replace("http://", "") for p in load()})
+    print(f"[proxies] fetched {len(raw)} candidates from {len(SOURCES)} lists (incl. pool)")
     t0 = time.time()
     alive = []
     with ThreadPoolExecutor(max_workers=THREADS) as pool:
