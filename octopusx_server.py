@@ -428,6 +428,7 @@ def api_stats() -> dict:
             "uptime_s": int(time.time() - state["started"]),
             "accounts": acc.get("n", 0), "wallet_usd": acc.get("wallet", 0.0),
             "models_working": sum(1 for v in sweep_verdicts().values() if v.get("status") == "OK"),
+            "dead_models": {m: int(v - time.time()) for m, v in state["dead_models"].items() if v > time.time()},
             "autoreg": autoreg_status(),
             "reqlog": list(state["reqlog"])[-30:],
         }
