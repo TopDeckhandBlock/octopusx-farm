@@ -93,9 +93,9 @@ def rnd(n):
 
 
 class MailTm:
-    """Temp inbox on mail.tm OR its mirror mail.gw (same API, split rate limits).
-    Sticky failover: keep the provider that worked last, switch on failure."""
-    PROVIDERS = ["https://api.mail.tm", "https://api.mail.gw"]
+    """Temp inbox on mail.tm. (mail.gw mirror is dead: 502 direct, timeout
+    via proxies — dropped so attempts don't burn time on it.)"""
+    PROVIDERS = ["https://api.mail.tm"]
     _sticky = None  # class-level: last api that answered /domains
 
     def _pick_api(self):
