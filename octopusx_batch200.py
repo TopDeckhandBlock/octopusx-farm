@@ -97,20 +97,29 @@ class MailTm:
     via proxies — dropped so attempts don't burn time on it.)"""
     PROVIDERS = ["https://api.mail.tm"]
     _sticky = None  # class-level: last api that answered /domains
+    _dom_cache = (0.0, None, None)  # (ts, api, domain) — /domains is static for weeks
 
     def _pick_api(self):
+        # ponytail: TTL-cache the domain: hammering /domains per attempt got IPs
+        # Cloudflare-banned (105x "no provider answered" mid-batch)
+        ts, api, dom = MailTm._dom_cache
+        if api and time.time() - ts < 600:
+            return api, dom
         order = [p for p in self.PROVIDERS if p != self._sticky]
         if self._sticky:
             order.insert(0, self._sticky)
         else:
             random.shuffle(order)
-        for api in order:
+        for a in order:
             try:
-                dom = http(f"{api}/domains")["hydra:member"][0]["domain"]
-                MailTm._sticky = api
-                return api, dom
+                d = http(f"{a}/domains")["hydra:member"][0]["domain"]
+                MailTm._sticky = a
+                MailTm._dom_cache = (time.time(), a, d)
+                return a, d
             except Exception:
                 continue
+        if api:  # stale cache beats nothing
+            return api, dom
         raise RuntimeError("no mail provider answered /domains")
 
     def __init__(self):
