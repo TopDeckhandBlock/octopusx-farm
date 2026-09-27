@@ -41,8 +41,8 @@ SOURCES = [
     "https://raw.githubusercontent.com/zloi-user/hideip.me/main/http.txt",
 ]
 OUT_PATH = "octopusx_proxies.json"
-TEST_URL = "https://api.ipify.org/?format=json"
-TIMEOUT = 8
+TEST_URL = "https://api.mail.tm/domains"  # the endpoint that actually matters
+TIMEOUT = 12
 THREADS = 120
 MAX_PROXIES = 3000
 
@@ -67,14 +67,13 @@ def fetch_lists():
 
 
 def test_proxy(pp):
-    """True if proxy answers HTTPS CONNECT with a valid response (real proxy)."""
+    """True if proxy delivers mail.tm /domains (Cloudflare bans many ASNs)."""
     try:
         opener = urllib.request.build_opener(
             urllib.request.ProxyHandler({"http": f"http://{pp}", "https": f"http://{pp}"}))
         req = urllib.request.Request(TEST_URL, headers={"User-Agent": "Mozilla/5.0"})
         with opener.open(req, timeout=TIMEOUT) as r:
-            body = r.read().decode("utf-8", "ignore")
-            return "ip" in body and r.status == 200
+            return r.status == 200 and b"domain" in r.read()
     except Exception:
         return False
 
