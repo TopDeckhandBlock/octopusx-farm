@@ -168,8 +168,8 @@ def mark_cooldown(key: str, code: int, body: bytes | None) -> None:
         dur = 1800
     elif "invalid" in err or "incorrect api key" in err or code == 401:
         dur = 86400
-    elif "quota" in err:
-        dur = 60
+    elif "quota" in err or "额度" in err:
+        dur = 86400
     elif code == 429:
         dur = 10
     elif code in (500, 502, 503, 504):
@@ -184,8 +184,11 @@ def is_retryable(code: int, body: bytes | None) -> bool:
     if body:
         try:
             d = json.loads(body)
-            msg = (d.get("error", {}).get("message", "") if isinstance(d, dict) else "").lower()
-            return any(w in msg for w in ("channel", "rate", "timeout", "upstream", "try again"))
+            e = d.get("error", {}) if isinstance(d, dict) else {}
+            blob = f"{e.get('code', '')} {e.get('message', '')}".lower()
+            if any(w in blob for w in ("quota", "arrearage", "额度", "good standing", "insufficient")):
+                return True  # key-specific: rotate to next key
+            return any(w in blob for w in ("channel", "rate", "timeout", "upstream", "try again"))
         except Exception:
             return False
     return False
@@ -548,7 +551,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         t0 = time.time()
         tried: set = set()
         attempts = 0
-        while attempts < min(max(total, 1), 4):
+        while attempts < min(max(total, 1), 12):
             key = select_key(tried)
             if not key:
                 break
@@ -568,7 +571,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 return
             except Exception as e:
                 mark_cooldown(key, 0, None)
-                if attempts >= min(max(total, 1), 4):
+                if attempts >= min(max(total, 1), 12):
                     record(model or path, False, f"conn: {type(e).__name__}", int((time.time() - t0) * 1000), key)
                     self._json({"error": {"message": f"upstream conn: {e}", "type": "conn_error"}}, 502)
                     return
