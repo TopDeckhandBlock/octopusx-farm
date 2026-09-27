@@ -729,7 +729,7 @@ window.probe=function(name){
   .then(r=>r.json()).then(j=>{document.title='OctopusX Farm';models()});
 };
 
-$('a-start').onclick=()=>{fetch('/api/autoreg/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({n:+$('a-n').value,workers:+$('a-w').value)})}).then(()=>stats())};
+$('a-start').onclick=()=>{fetch('/api/autoreg/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({n:+$('a-n').value,workers:+$('a-w').value})}).then(()=>stats())};
 $('a-stop').onclick=()=>{fetch('/api/autoreg/stop',{method:'POST'}).then(()=>stats())};
 $('a-sync').onclick=()=>{$('a-sync').disabled=true;fetch('/api/autoreg/sync',{method:'POST'}).then(r=>r.json()).then(()=>{$('a-sync').disabled=false;stats()})};
 $('m-q').oninput=models;$('m-f').onchange=models;
