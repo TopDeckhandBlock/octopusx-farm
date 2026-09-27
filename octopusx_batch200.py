@@ -54,6 +54,8 @@ def http(url, data=None, headers=None, method=None, timeout=15, retries=3):
                     # alive -> rotate WITHOUT killing it (mark_dead'ing here
                     # drained the whole pool during a single 429 storm)
                     if e.code in (429, 502, 503):
+                        if ".mail.tm" in url or ".mail.gw" in url:
+                            _mail_burn(proxy)  # per-IP quota: cool it, don't re-pick
                         if attempt < retries - 1:
                             _tls.proxy = _pick_proxy()
                             time.sleep(3 * (attempt + 1))
@@ -72,6 +74,8 @@ def http(url, data=None, headers=None, method=None, timeout=15, retries=3):
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
             if e.code in (429, 502, 503) and attempt < retries - 1:
+                if ".mail.tm" in url or ".mail.gw" in url:
+                    _mail_burn(proxy)
                 if proxy:  # IP burned for this host -> rotate (keep in pool)
                     _tls.proxy = _pick_proxy()
                 time.sleep(3 * (attempt + 1))
@@ -111,7 +115,7 @@ class MailTm:
 
     def __init__(self):
         self.api, dom = self._pick_api()
-        self.address = "ox" + rnd(8) + "@" + dom
+        self.address = random.choice(["james", "mary", "john", "linda", "robert", "michael", "sarah", "david", "karen", "emily","daniel", "jessica", "kevin", "laura", "brian", "amanda", "steve", "rachel", "paul", "anna"]) + rnd(random.randint(2, 5)) + "@" + dom
         self.password = rnd(14)
         http(f"{self.api}/accounts", {"address": self.address, "password": self.password}, method="POST")
         self.token = http(f"{self.api}/token",
@@ -203,7 +207,13 @@ def _pick_proxy():
     except Exception:
         return None
 
-
+def _mail_burn(p):
+    """mail 429 on this IP: 15-min cooldown in the shared pool."""
+    try:
+        import octopusx_proxies
+        octopusx_proxies.mark_mail_cd(p)
+    except Exception:
+        pass
 def _rotate_dead(p):
     """Mark proxy dead in the shared pool memory, then pick the next one."""
     try:
