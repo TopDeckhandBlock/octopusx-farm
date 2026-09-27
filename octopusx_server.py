@@ -46,6 +46,7 @@ MAX_BODY_BYTES = 10 * 1024 * 1024
 UPSTREAM_TIMEOUT = 180
 PROBE_TIMEOUT = 90
 REQLOG_SIZE = 300
+FARM_LOOP = os.environ.get("OCTOPUSX_FARM_LOOP") == "1"
 
 lock = threading.RLock()
 state: dict = {
@@ -62,6 +63,7 @@ autoreg: dict = {
     "running": False, "proc": None, "n": 0, "workers": 5,
     "started": None, "finished": None, "exit_code": None,
     "accounts_before": 0, "syncing": False, "last_sync": None,
+    "loop_stop": False,
 }
 
 ctx = ssl.create_default_context()
@@ -301,7 +303,7 @@ def autoreg_start(n: int, workers: int) -> dict:
         if not os.path.exists(BATCH_SCRIPT):
             return {"error": f"missing {os.path.basename(BATCH_SCRIPT)}"}
         autoreg.update(running=True, n=n, workers=workers, started=time.time(),
-                       finished=None, exit_code=None,
+                       finished=None, exit_code=None, loop_stop=False,
                        accounts_before=accounts_info().get("n", 0))
         log = open(LOG_PATH, "ab")
         flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
@@ -325,10 +327,16 @@ def _autoreg_watch() -> None:
             autoreg["last_sync"] = time.time()
     except Exception:
         pass
-
+    if FARM_LOOP and not autoreg.get("loop_stop"):
+        try:
+            autoreg_start(autoreg["n"] or 10, autoreg["workers"] or 5)
+            print(f"[farm-loop] next batch n={autoreg['n']}", flush=True)
+        except Exception as e:
+            print(f"[farm-loop] chain failed: {e}", flush=True)
 
 def autoreg_stop() -> dict:
     with lock:
+        autoreg["loop_stop"] = True
         p = autoreg["proc"]
         if p and p.poll() is None:
             p.kill()
