@@ -10,8 +10,10 @@ import string
 import sys
 import time
 import urllib.error
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
+
+_tls = threading.local()  # per-account proxy: _tls.proxy = "http://ip:port" or None
 
 BASE = "https://octopusx.ai"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -38,6 +40,17 @@ def http(url, data=None, headers=None, method=None, timeout=45, retries=3):
             req = urllib.request.Request(
                 url, data=json.dumps(data).encode() if data is not None else None,
                 headers=h, method=method or ("POST" if data is not None else "GET"))
+            proxy = getattr(_tls, "proxy", None) if "mail.tm" not in url else None
+            if proxy:
+                try:
+                    opener = urllib.request.build_opener(urllib.request.ProxyHandler(
+                        {"http": proxy, "https": proxy}))
+                    with opener.open(req, timeout=timeout) as r:
+                        return json.loads(r.read())
+                except Exception:
+                    if attempt < retries - 1:
+                        _tls.proxy = None  # dead proxy -> direct fallback for this thread
+                        continue
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
@@ -89,6 +102,7 @@ def get_wallet(auth):
 
 
 def register_account(i):
+    _tls.proxy = _pick_proxy()
     box = MailTm()
     email = box.address
 
@@ -143,9 +157,16 @@ def register_account(i):
     print(f"[{i}] {email} uid={user['id']} ${acc['wallet_usd']} keys={len(keys)} {keys[0][:16]}..",
           flush=True)
     return acc
+def _pick_proxy():
+    try:
+        import octopusx_proxies
+        return octopusx_proxies.pick()
+    except Exception:
+        return None
 
 
 def register_with_retry(i, attempts=5):
+
     for a in range(attempts):
         try:
             return register_account(i)
@@ -155,6 +176,12 @@ def register_with_retry(i, attempts=5):
             time.sleep(3 + 4 * (a + 1))
 
 def main():
+    try:
+        import octopusx_proxies
+        alive = octopusx_proxies.refresh()
+        print(f"[proxies] using {len(alive)} free proxies (direct fallback per thread)")
+    except Exception as e:
+        print(f"[proxies] unavailable ({e}), going direct")
     done = 0
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=WORKERS) as ex:
