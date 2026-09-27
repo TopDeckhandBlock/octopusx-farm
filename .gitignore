@@ -1,0 +1,10 @@
+# secrets / private data
+octopusx_keys.json
+octopusx_accounts.jsonl
+octopusx_accounts.json
+octopusx_alive.json
+# logs
+*.log
+# python
+__pycache__/
+*.pyc
