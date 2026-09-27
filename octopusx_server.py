@@ -501,7 +501,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         elif self.path == "/api/autoreg/start":
             d = self._read_json() or {}
             n = max(1, min(int(d.get("n", 10)), 500))
-            w = max(1, min(int(d.get("workers", 5)), 10))
+            w = max(1, min(int(d.get("workers", 5)), 20))
             self._json(autoreg_start(n, w))
         elif self.path == "/api/autoreg/stop":
             self._json(autoreg_stop())
@@ -663,7 +663,7 @@ tr:hover td{background:#0e141d}
 <div class="panel"><h2>Autoreg</h2>
 <div class="row">
 accounts <input id="a-n" type="number" value="10" min="1" max="500">
-workers <input id="a-w" type="number" value="5" min="1" max="10">
+workers <input id="a-w" type="number" value="5" min="1" max="20">
 <button id="a-start">▶ Start</button>
 <button id="a-stop">■ Stop</button>
 <button id="a-sync">⟳ Sync keys</button>
