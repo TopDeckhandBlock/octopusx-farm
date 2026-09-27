@@ -503,8 +503,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self._json(probe_model(m))
         elif self.path == "/api/autoreg/start":
             d = self._read_json() or {}
-            n = max(1, min(int(d.get("n", 10)), 500))
-            w = max(1, min(int(d.get("workers", 5)), 20))
+            n = max(1, min(int(d.get("n", 10)), 1000))
+            w = max(1, min(int(d.get("workers", 5)), 60))
             self._json(autoreg_start(n, w))
         elif self.path == "/api/autoreg/stop":
             self._json(autoreg_stop())
