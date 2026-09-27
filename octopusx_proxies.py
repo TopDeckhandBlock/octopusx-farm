@@ -12,7 +12,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 SOURCES = [
     "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=5000&country=all&ssl=all&anonymity=all",
-    "https://api.proxyscrape.com/v3/default-free-proxy-list?request=displayproxies&protocol=http&timeout=5000&country=all&ssl=all&anonymity=all",
     "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt",
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
     "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt",
@@ -21,10 +20,7 @@ SOURCES = [
     "https://api.openproxylist.xyz/http.txt",
     "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt",
     "https://raw.githubusercontent.com/sunny9577/proxy-scraper/master/generated/http_proxies.txt",
-    "https://raw.githubusercontent.com/ShiftyRob/Proxy-List/master/http.txt",
     "https://raw.githubusercontent.com/zevtyardt/proxy-list/main/all.txt",
-    "https://raw.githubusercontent.com/yemixzy/proxy-list/master/proxies/http.txt",
-    "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTP_RAW.txt",
     "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=http",
     # jsdelivr mirrors (raw.githubusercontent 404-resilience)
     "https://cdn.jsdelivr.net/gh/monosans/proxy-list@main/proxies/http.txt",
@@ -36,14 +32,22 @@ SOURCES = [
     "https://raw.githubusercontent.com/wiki/gfpcom/free-proxy-list/lists/http.txt",
     "https://vakhov.github.io/fresh-proxy-list/http.txt",
     "https://raw.githubusercontent.com/iplocate/free-proxy-list/main/protocols/http.txt",
+    # wave 2
+    "https://raw.githubusercontent.com/proxy4parsing/proxy-list/main/http.txt",
+    "https://raw.githubusercontent.com/B4RC0DE-TM/proxy-list/main/HTTP.txt",
+    "https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&protocol=http",
+    "https://cdn.jsdelivr.net/gh/sunny9577/proxy-scraper@master/generated/http_proxies.txt",
+    "https://cdn.jsdelivr.net/gh/mmpx12/proxy-list@master/http.txt",
+    "https://raw.githubusercontent.com/zloi-user/hideip.me/main/http.txt",
 ]
 OUT_PATH = "octopusx_proxies.json"
 TEST_URL = "https://api.ipify.org/?format=json"
 TIMEOUT = 8
 THREADS = 120
-MAX_PROXIES = 2000
+MAX_PROXIES = 3000
 
 _dead = set()  # in-flight failures; process-local memory of dead proxies
+_mail_cd = {}  # proxy -> cooldown-until ts; mail.tm 429 per-IP quota
 
 
 def fetch_lists():
@@ -59,7 +63,7 @@ def fetch_lists():
                     found.add(line)
         except Exception as e:
             print(f"[proxies] source failed: {src.split('/')[2]}: {e}")
-    return list(found)[:MAX_PROXIES * 3]
+    return list(found)[:MAX_PROXIES * 4]
 
 
 def test_proxy(pp):
@@ -104,10 +108,18 @@ def mark_dead(p):
         _dead.add(p)
 
 
+def mark_mail_cd(p, seconds=900):
+    """mail.tm 429 on this IP: per-IP quota burned, cool it down 15 min."""
+    if p:
+        _mail_cd[p] = time.time() + seconds
+
+
 def pick():
-    """Random alive (not known-dead) proxy or None. Usage: _tls.proxy = pick() per account."""
+    """Random alive (not known-dead, not mail-cooling) proxy or None."""
+    now = time.time()
     lst = [p for p in load() if p not in _dead]
-    return random.choice(lst) if lst else None
+    fresh = [p for p in lst if _mail_cd.get(p, 0) <= now]
+    return random.choice(fresh) if fresh else (random.choice(lst) if lst else None)
 
 
 if __name__ == "__main__":
