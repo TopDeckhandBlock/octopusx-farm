@@ -21,6 +21,8 @@ TIMEOUT = 8
 THREADS = 60
 MAX_PROXIES = 300
 
+_dead = set()  # in-flight failures; process-local memory of dead proxies
+
 
 def fetch_lists():
     found = set()
@@ -73,9 +75,15 @@ def load():
         return []
 
 
+def mark_dead(p):
+    """Remember a proxy that failed mid-request; pick() skips it."""
+    if p:
+        _dead.add(p)
+
+
 def pick():
-    """Random alive proxy or None. Usage: _tls.proxy = pick() per account."""
-    lst = load()
+    """Random alive (not known-dead) proxy or None. Usage: _tls.proxy = pick() per account."""
+    lst = [p for p in load() if p not in _dead]
     return random.choice(lst) if lst else None
 
 
