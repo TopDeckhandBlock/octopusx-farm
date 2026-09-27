@@ -201,11 +201,19 @@ def register_account(i):
           flush=True)
     return acc
 def _pick_proxy():
-    try:
-        import octopusx_proxies
-        return octopusx_proxies.pick()
-    except Exception:
-        return None
+    """Fresh proxy or WAIT for one (all in mail-cooldown = pool rate-limit).
+    Sleeping beats burning attempts on hot IPs: 440/500 died that way."""
+    p = None
+    for _ in range(4):  # ~4 x 20s cap, then fall back to any hot one
+        try:
+            import octopusx_proxies as px
+        except Exception:
+            return None
+        p = px.pick()
+        if p is None or px.mail_cd_left(p) == 0:
+            return p
+        time.sleep(random.uniform(15, 25))
+    return p
 
 def _mail_burn(p):
     """mail 429 on this IP: 15-min cooldown in the shared pool."""
