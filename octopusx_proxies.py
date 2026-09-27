@@ -108,10 +108,15 @@ def mark_dead(p):
         _dead.add(p)
 
 
-def mark_mail_cd(p, seconds=900):
-    """mail.tm 429 on this IP: per-IP quota burned, cool it down 15 min."""
+def mark_mail_cd(p, seconds=1800):
+    """mail.tm 429 on this IP: per-IP quota burned, cool it down 30 min."""
     if p:
         _mail_cd[p] = time.time() + seconds
+
+
+def mail_cd_left(p):
+    """Seconds left on mail cooldown for p (0 = fresh)."""
+    return max(0, _mail_cd.get(p, 0) - time.time())
 
 
 def pick():
