@@ -26,6 +26,16 @@ SOURCES = [
     "https://raw.githubusercontent.com/yemixzy/proxy-list/master/proxies/http.txt",
     "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTP_RAW.txt",
     "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=http",
+    # jsdelivr mirrors (raw.githubusercontent 404-resilience)
+    "https://cdn.jsdelivr.net/gh/monosans/proxy-list@main/proxies/http.txt",
+    "https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/all/data.txt",
+    "https://cdn.jsdelivr.net/gh/TheSpeedX/PROXY-List@master/http.txt",
+    "https://cdn.jsdelivr.net/gh/zevtyardt/proxy-list@main/all.txt",
+    "https://cdn.jsdelivr.net/gh/ProxyScrape/free-proxy-list@main/proxies/protocols/http/data.txt",
+    # fresh sources
+    "https://raw.githubusercontent.com/wiki/gfpcom/free-proxy-list/lists/http.txt",
+    "https://vakhov.github.io/fresh-proxy-list/http.txt",
+    "https://raw.githubusercontent.com/iplocate/free-proxy-list/main/protocols/http.txt",
 ]
 OUT_PATH = "octopusx_proxies.json"
 TEST_URL = "https://api.ipify.org/?format=json"
