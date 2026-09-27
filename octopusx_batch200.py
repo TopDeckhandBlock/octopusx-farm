@@ -49,10 +49,25 @@ def http(url, data=None, headers=None, method=None, timeout=15, retries=3):
                         {"http": proxy, "https": proxy}))
                     with opener.open(req, timeout=timeout) as r:
                         return json.loads(r.read())
+                except urllib.error.HTTPError as e:
+                    # 429/502/503 via proxy = IP burned for THIS host, proxy is
+                    # alive -> rotate WITHOUT killing it (mark_dead'ing here
+                    # drained the whole pool during a single 429 storm)
+                    if e.code in (429, 502, 503):
+                        if attempt < retries - 1:
+                            _tls.proxy = _pick_proxy()
+                            time.sleep(3 * (attempt + 1))
+                            continue
+                        raise RuntimeError(f"HTTP {e.code} @ {url}") from e
+                    if attempt < retries - 1:
+                        _rotate_dead(proxy)
+                        continue
+                    raise
                 except Exception:
                     if attempt < retries - 1:
-                        _rotate_dead(proxy)  # dead proxy -> mark dead + rotate to another
+                        _rotate_dead(proxy)  # dead proxy -> mark dead + rotate
                         continue
+                    raise
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
@@ -61,7 +76,7 @@ def http(url, data=None, headers=None, method=None, timeout=15, retries=3):
                     _tls.proxy = _pick_proxy()
                 time.sleep(3 * (attempt + 1))
                 continue
-            raise
+            raise RuntimeError(f"HTTP {e.code} @ {url}") from e
         except Exception as e:
             if attempt < retries - 1:
                 time.sleep(2 * (attempt + 1))
