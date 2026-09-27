@@ -729,9 +729,12 @@ window.probe=function(name){
   .then(r=>r.json()).then(j=>{document.title='OctopusX Farm';models()});
 };
 
-$('a-start').onclick=()=>{fetch('/api/autoreg/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({n:+$('a-n').value,workers:+$('a-w').value})}).then(()=>stats())};
-$('a-stop').onclick=()=>{fetch('/api/autoreg/stop',{method:'POST'}).then(()=>stats())};
-$('a-sync').onclick=()=>{$('a-sync').disabled=true;fetch('/api/autoreg/sync',{method:'POST'}).then(r=>r.json()).then(()=>{$('a-sync').disabled=false;stats()})};
+function aPost(url,body){return fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:body})
+ .then(r=>r.json()).then(d=>{if(d.error){$('a-state').className='tag bad';$('a-state').textContent=d.error}else{stats()}})
+ .catch(e=>{$('a-state').className='tag bad';$('a-state').textContent=String(e)})};
+$('a-start').onclick=()=>aPost('/api/autoreg/start',JSON.stringify({n:+$('a-n').value||10,workers:+$('a-w').value||5}));
+$('a-stop').onclick=()=>aPost('/api/autoreg/stop');
+$('a-sync').onclick=()=>{$('a-sync').disabled=true;aPost('/api/autoreg/sync').then(()=>{$('a-sync').disabled=false})};
 $('m-q').oninput=models;$('m-f').onchange=models;
 
 stats();models();setInterval(stats,5000);setInterval(models,15000);
