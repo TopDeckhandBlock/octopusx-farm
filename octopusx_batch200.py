@@ -40,7 +40,7 @@ def http(url, data=None, headers=None, method=None, timeout=45, retries=3):
             req = urllib.request.Request(
                 url, data=json.dumps(data).encode() if data is not None else None,
                 headers=h, method=method or ("POST" if data is not None else "GET"))
-            proxy = getattr(_tls, "proxy", None) if "mail.tm" not in url else None
+            proxy = getattr(_tls, "proxy", None)
             if proxy:
                 try:
                     opener = urllib.request.build_opener(urllib.request.ProxyHandler(
@@ -49,7 +49,7 @@ def http(url, data=None, headers=None, method=None, timeout=45, retries=3):
                         return json.loads(r.read())
                 except Exception:
                     if attempt < retries - 1:
-                        _tls.proxy = None  # dead proxy -> direct fallback for this thread
+                        _tls.proxy = _pick_proxy()  # dead proxy -> rotate to another
                         continue
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read())
