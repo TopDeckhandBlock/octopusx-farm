@@ -5,6 +5,7 @@ Usage: python octopusx_proxies.py            (fetch + validate + save)
 (public "alive" lists are ~95% dead / CDN endpoints, so we test ourselves).
 """
 import json
+import os
 import random
 import time
 import urllib.request
@@ -39,6 +40,31 @@ SOURCES = [
     "https://cdn.jsdelivr.net/gh/sunny9577/proxy-scraper@master/generated/http_proxies.txt",
     "https://cdn.jsdelivr.net/gh/mmpx12/proxy-list@master/http.txt",
     "https://raw.githubusercontent.com/zloi-user/hideip.me/main/http.txt",
+    "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt",
+    # proxy-workbench catalog (github.com/DavidVoitenko/proxy-workbench)
+    "https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/main/http.txt",
+    "https://proxyspace.pro/http.txt",
+    "https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&protocol=http&proxy_format=ipport&format=text",
+    "https://raw.githubusercontent.com/rdavydov/proxy-list/main/proxies/http.txt",
+    "https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/master/https.txt",
+    "https://raw.githubusercontent.com/zloi-user/hideip.me/main/https.txt",
+    "https://cdn.jsdelivr.net/gh/proxyscrape/free-proxy-list@main/proxies/protocols/https/data.txt",
+    "https://raw.githubusercontent.com/relayglass/free-proxy-list/main/protocol/https/https.txt",
+    "https://raw.githubusercontent.com/dinoz0rg/proxy-list/main/checked_proxies/http.txt",
+    "https://raw.githubusercontent.com/databay-labs/free-proxy-list/master/http.txt",
+    "https://raw.githubusercontent.com/Vann-Dev/proxy-list/main/proxies/http.txt",
+    "https://cdn.jsdelivr.net/gh/proxyscrape/free-proxy-list@main/proxies/protocols/http/data.txt",
+    "https://raw.githubusercontent.com/Anonym0usWork1221/Free-Proxies/main/proxy_files/http_proxies.txt",
+    "https://raw.githubusercontent.com/ObcbO/getproxy/master/file/http.txt",
+    "https://raw.githubusercontent.com/casals-ar/proxy-list/main/http",
+    "https://raw.githubusercontent.com/hproxy-com/free-proxy-list/main/https.txt",
+    "https://raw.githubusercontent.com/hproxy-com/free-proxy-list/main/http.txt",
+    "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt",
+    "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-http.txt",
+    "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/http.txt",
+    "https://raw.githubusercontent.com/zloi-user/hideip.me/main/http.txt",
+    "https://raw.githubusercontent.com/zloi-user/hideip.me/main/https.txt",
+    "https://raw.githubusercontent.com/mmpx12/proxy-list/master/https.txt",
 ]
 OUT_PATH = "octopusx_proxies.json"
 TEST_URL = "https://api.mail.tm/domains"  # the endpoint that actually matters
@@ -48,6 +74,49 @@ MAX_PROXIES = 3000
 
 _dead = set()  # in-flight failures; process-local memory of dead proxies
 _mail_cd = {}  # proxy -> cooldown-until ts; mail.tm 429 per-IP quota
+# --- BrightData zones (paid, always-alive). Creds pulled from panel ->
+# brd_creds.json via brd_get_creds.py (connect.sid cookies; API token 401).
+# - datacenter_proxy1: rotating dc; sessid suffix = sticky per-session IP,
+#   each sessid gets its own mail.tm per-IP quota (fixes the 429 ceiling).
+# - isp_proxy1/isp_proxy2 (res_static): zone user routes via assigned static IP.
+BRD_CID = "brd-customer-hl_2e228c6c"
+BRD_HOST = "brd.superproxy.io:44445"
+BRD_DC_SESS = 300  # sticky dc sessions = independent per-IP quotas
+
+
+def brd_proxies():
+    """All BrightData zones from brd_creds.json (+ dc sessid fanout)."""
+    try:
+        creds = json.load(open(os.path.join(os.path.dirname(__file__),
+                                            "brd_creds.json")))
+    except Exception as e:
+        print(f"[proxies] brd_creds.json missing: {e}", flush=True)
+        creds = {}
+    out = []
+    for name, z in creds.items():
+        pw = z.get("password")
+        if not pw or z.get("product") in ("unblocker", "browser_api"):
+            continue
+        if z.get("product") == "dc":
+            for i in range(BRD_DC_SESS):
+                out.append(f"http://{BRD_CID}-zone-{name}-session-f{i:03d}:{pw}@{BRD_HOST}")
+        else:
+            # res_static: enumerate assigned IPs if known, else bare zone user
+            ips = z.get("ips")
+            if isinstance(ips, list) and ips:
+                out += [f"http://{BRD_CID}-zone-{name}-ip-{ip}:{pw}@{BRD_HOST}" for ip in ips]
+            else:
+                out.append(f"http://{BRD_CID}-zone-{name}:{pw}@{BRD_HOST}")
+    return out
+
+
+def _merge_brd(alive):
+    """Always-alive paid IPs: append untested (super-proxy uptime ~100%)."""
+    brd = brd_proxies()
+    added = [p for p in brd if p not in alive]
+    if added:
+        print(f"[proxies] +{len(added)} BrightData zone URLs", flush=True)
+    return alive + added
 
 
 def fetch_lists():
@@ -78,8 +147,26 @@ def test_proxy(pp):
         return False
 
 
-def refresh():
-    """Fetch + validate; returns list of http://ip:port strings (may be empty)."""
+POOL_TTL = 1200  # reuse saved alive-pool if younger than this (s)
+
+
+def refresh(force: bool = False):
+    """Fetch + validate; returns list of http://ip:port strings (may be empty).
+
+    If OUT_PATH was written < POOL_TTL ago, reuse it — parallel batches skip the
+    ~13-min re-check of the same 12k candidates (they were burning each other).
+    """
+    import os
+    if not force:
+        try:
+            if os.path.exists(OUT_PATH) and time.time() - os.path.getmtime(OUT_PATH) < POOL_TTL:
+                alive = load()
+                if alive:
+                    print(f"[proxies] reusing fresh pool: {len(alive)} alive "
+                          f"({time.time() - os.path.getmtime(OUT_PATH):.0f}s old)", flush=True)
+                    return alive
+        except OSError:
+            pass
     raw = fetch_lists()
     raw = list(set(raw) | {p.replace("http://", "") for p in load()})
     print(f"[proxies] fetched {len(raw)} candidates from {len(SOURCES)} lists (incl. pool)")
@@ -90,6 +177,7 @@ def refresh():
             if ok:
                 alive.append(f"http://{pp}")
     print(f"[proxies] alive: {len(alive)}/{len(raw)} in {time.time() - t0:.0f}s")
+    alive = _merge_brd(alive)
     json.dump(alive, open(OUT_PATH, "w"), indent=1)
     return alive
 
